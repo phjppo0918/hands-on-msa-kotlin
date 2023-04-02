@@ -19,10 +19,10 @@ class CustomerServiceImpl : CustomerService {
     }
 
     val storage: MutableMap<Long, Customer> = ConcurrentHashMap(customers.associateBy(Customer::id));
-    override fun save(customer: Customer) {
-        val nextId: Long = storage.size + 1.toLong()
-        storage[nextId] = customer;
-    }
+    override fun save(customer: Mono<Customer>): Mono<*> =
+        customer.subscribe {
+            storage[it.id] = it
+        }.toMono()
 
     override fun findById(id: Long): Mono<Customer> = storage[id].toMono()
 

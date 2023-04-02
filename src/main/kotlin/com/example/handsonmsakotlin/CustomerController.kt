@@ -1,5 +1,6 @@
 package com.example.handsonmsakotlin
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -14,4 +15,8 @@ class CustomerController(private val customerService: CustomerService) {
     @GetMapping
     fun getAll(@RequestParam name : String) : ResponseEntity<Flux<Customer>> =
         ResponseEntity.ok(customerService.findAll(name))
+
+    @PostMapping
+    fun create(@RequestBody customer: Mono<Customer>) : ResponseEntity<Mono<*>> =
+        ResponseEntity(customerService.save(customer), HttpStatus.CREATED)
 }
